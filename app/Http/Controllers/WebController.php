@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Support\Seo;
-use CoffeeCode\Optimizer\Optimizer;
+use App\Post;
 use Illuminate\Http\Request;
 
 class WebController extends Controller
 {
     public function home()
     {
+        $posts = Post::orderBy('created_at', 'DESC')->limit(3)->get();
+
         $head = $this->seo->render(
             env('APP_NAME') . ' - UpInside Treinamentos',
             'A escola eleita a melhor do Brasil com reconhecimento em mais de 17 países pela Latin American Quality Institute',
@@ -18,7 +19,8 @@ class WebController extends Controller
         );
 
         return view('front.home', [
-            'head' => $head
+            'head' => $head,
+            'posts' => $posts
         ]);
     }
 
