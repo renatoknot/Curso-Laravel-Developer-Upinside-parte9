@@ -33,11 +33,15 @@ class WebController extends Controller
             asset('images/img_bg_1.jpg')
         );
 
-        return view('front.course', ['head' => $head]);
+        return view('front.course', [
+            'head' => $head
+        ]);
     }
 
     public function blog()
     {
+        $posts = Post::orderBy('created_at', 'DESC')->get();
+
         $head = $this->seo->render(
             env('APP_NAME') . ' - UpInside Treinamentos',
             'A escola eleita a melhor do Brasil com reconhecimento em mais de 17 países pela Latin American Quality Institute',
@@ -45,19 +49,27 @@ class WebController extends Controller
             asset('images/img_bg_1.jpg')
         );
 
-        return view('front.blog', ['head' => $head]);
+        return view('front.blog', [
+            'head' => $head,
+            'posts' => $posts
+        ]);
     }
 
-    public function article()
+    public function article($uri)
     {
+        $post = Post::where('uri', $uri)->first();
+
         $head = $this->seo->render(
-            env('APP_NAME') . ' - UpInside Treinamentos',
-            'A escola eleita a melhor do Brasil com reconhecimento em mais de 17 países pela Latin American Quality Institute',
-            route('article'),
-            asset('images/img_bg_1.jpg')
+            env('APP_NAME') . ' - ' . $post->title,
+            $post->subtitle,
+            route('article', ['uri' => $post->uri]),
+            asset(\Illuminate\Support\Facades\Storage::url(\App\Support\Cropper::thumb($post->cover, 1200, 628)))
         );
 
-        return view('front.article', ['head' => $head]);
+        return view('front.article', [
+            'head' => $head,
+            'post' => $post
+        ]);
     }
 
     public function contact()
