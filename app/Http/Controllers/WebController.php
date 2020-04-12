@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\Contact;
 use App\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class WebController extends Controller
 {
@@ -82,5 +84,21 @@ class WebController extends Controller
         );
 
         return view('front.contact', ['head' => $head]);
+    }
+
+    public function sendMail(Request $request)
+    {
+        $data = [
+            'reply_name' => $request->first_name. ' ' . $request->last_name,
+            'reply_email' => $request->email,
+            'subject' => $request->subject,
+            'message' => $request->message
+        ];
+
+
+        Mail::send(new Contact($data));
+        //return new Contact($data);
+
+        //dump($request->all());
     }
 }
